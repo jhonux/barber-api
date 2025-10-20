@@ -137,11 +137,11 @@ A documentação interativa é gerada automaticamente pelo FastAPI:
 👤 Contato
 
 Jonatas Pereira de Souza
-🔗 LinkedIn: [text](www.linkedin.com/in/jon-souza)
+🔗 LinkedIn: [Jonatas Pereira de Souza](https://www.linkedin.com/in/jon-souza)
+💻 GitHub: [JhonUx](https://github.com/jhonux)
 
-💻 GitHub: [text](https://github.com/jhonux)
 
-<div align="center"> Feito com ❤️ e ☕ por <b>Jonatas Souza</b> <br> <sub>© 2025 BarberAPI. Todos os direitos reservados.</sub> </div> ```
+<div align="center"> Feito com ❤️ e ☕ por <b>Jonatas Souza</b> <br> <sub>© 2025 BarberAPI. Todos os direitos reservados.</sub> </div> 
 
 
 
