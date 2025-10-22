@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from typing import List
 from sqlalchemy.orm import Session
 
 from app import crud, schemas, models, auth
@@ -45,3 +46,23 @@ def read_root():
 @app.get("/users/me/", response_model=schemas.User)
 def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
     return current_user
+
+@app.post("/services/", response_model=schemas.Service, status_code=status.HTTP_201_CREATED)
+def create_new_service(
+    service: schemas.ServiceCreate, 
+    db: Session = Depends(get_db), 
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    
+    return crud.create_service(db=db, service=service)
+
+
+@app.get("/services/", response_model=List[schemas.Service])
+def read_all_services(
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db), 
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    services = crud.get_services(db, skip=skip, limit=limit)
+    return services

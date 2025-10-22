@@ -16,3 +16,15 @@ class UserCreate(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class ServiceCreate(BaseModel):
+    name: str
+    duration_minutes: int
+    price: float
+
+
+class Service(ServiceCreate):
+    id: int
+
+    class Config:
+        from_attributes = True

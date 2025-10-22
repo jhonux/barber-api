@@ -17,3 +17,17 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
 
     return db_user
+
+def get_services(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Service).offset(skip).limit(limit).all()
+
+def create_service(db: Session, service: schemas.ServiceCreate):
+    db_service = models.Service(
+        name=service.name,
+        duration_minutes=service.duration_minutes,
+        price=service.price
+    )
+    db.add(db_service)
+    db.commit()
+    db.refresh(db_service)
+    return db_service
