@@ -21,18 +21,22 @@ Projeto criado para **portfólio**, aplicando boas práticas de **arquitetura**,
 
 ---
 
-## 🚧 **Status do Projeto**
+## 🚧 Status do Projeto
 
-> 🔄 **Em desenvolvimento ativo**
->
-> ✅ **Fase 1 (concluída):** Base segura da API, autenticação, hashing e proteção de endpoints.  
-> 🚀 **Próximas fases:** Implementação da lógica de agendamento e interface de administração.
+🔄 **Em desenvolvimento ativo**
+
+| Fase | Descrição |
+|:-----|:-----------|
+| ✅ **Fase 1 (concluída)** | Base segura da API, autenticação, hashing e proteção de endpoints. |
+| ✅ **Fase 2 (concluída)** | Ferramenta interna de gestão para o barbeiro (CRUD completo de Serviços, Disponibilidade e Agendamentos Manuais). |
+| 🚀 **Fase 3 (em andamento)** | Implementação das funcionalidades públicas para clientes (listagem de serviços já concluída). |
+
 
 ---
 
-## ✨ **Funcionalidades (Fase 1 Concluída)**
+## ✨ Funcionalidades Implementadas
 
-A base da aplicação está construída com foco total em **segurança** e **escalabilidade**:
+A API oferece um conjunto completo de funcionalidades para a gestão interna da barbearia, com foco total em **segurança** e **escalabilidade**:
 
 - 🔐 **Autenticação de Usuários com JWT:**  
   Sistema completo de cadastro e login com geração de tokens de acesso protegidos.
@@ -41,11 +45,22 @@ A base da aplicação está construída com foco total em **segurança** e **esc
   As senhas são criptografadas com **bcrypt**, garantindo sigilo total.
 
 - 🧱 **Endpoints Protegidos:**  
-  Apenas usuários autenticados podem criar e manipular recursos (como serviços).
+  Apenas usuários autenticados podem gerenciar os recursos do sistema.
 
 - 🧾 **Validação de Dados com Pydantic:**  
   Todos os dados são validados antes de entrar na API, evitando inconsistências.
 
+- 💼 **Gestão de Serviços (CRUD Completo):**  
+  O barbeiro pode criar, visualizar, atualizar e remover os serviços oferecidos.
+
+- 📅 **Gestão de Disponibilidade:**  
+  O barbeiro pode definir e remover seus horários de trabalho semanais.
+
+- ✍️ **Gestão de Agendamentos Manuais:**  
+  O barbeiro pode criar, visualizar e remover agendamentos para seus clientes.
+
+- 🌐 **Listagem Pública de Serviços:**  
+  Qualquer pessoa pode visualizar o menu de serviços oferecidos pela barbearia.
 ---
 
 ## 🛠️ **Tecnologias Utilizadas**
@@ -110,31 +125,43 @@ A documentação interativa é gerada automaticamente pelo FastAPI:
 
 📘 ReDoc: http://127.0.0.1:8000/redoc
 
-🔑 Principais Endpoints (Fase 1)
-| Método | Endpoint     | Descrição                                         | Autenticação |
-| ------ | ------------ | ------------------------------------------------- | ------------ |
-| POST   | `/users/`    | Cria um novo usuário (dono da barbearia).         | ❌            |
-| POST   | `/token`     | Realiza o login e retorna um token de acesso JWT. | ❌            |
-| GET    | `/users/me/` | Retorna os dados do usuário logado.               | ✅            |
-| POST   | `/services/` | Cria um novo serviço oferecido pela barbearia.    | ✅            |
+## 🔑 Endpoints Implementados
 
- Fase 1: Estrutura segura da API (concluída)
+| Método | Endpoint                     | Descrição                                          | Status |
+|:--------|:------------------------------|:---------------------------------------------------|:-------:|
+| **POST**   | `/users/`                     | Cria um novo usuário (dono da barbearia).           | ❌ |
+| **POST**   | `/token`                      | Realiza o login e retorna um token de acesso JWT.   | ❌ |
+| **GET**    | `/users/me/`                  | Retorna os dados do usuário logado.                 | ✅ |
+| **GET**    | `/services/public/`           | Lista todos os serviços (público).                  | ❌ |
+| **POST**   | `/services/`                  | Cria um novo serviço.                               | ✅ |
+| **GET**    | `/services/`                  | Lista todos os serviços (requer autenticação).      | ✅ |
+| **PUT**    | `/services/{service_id}`      | Atualiza um serviço existente.                      | ✅ |
+| **DELETE** | `/services/{service_id}`      | Remove um serviço existente.                        | ✅ |
+| **POST**   | `/availability/`              | Cria um novo horário de disponibilidade.            | ✅ |
+| **GET**    | `/availability/me/`           | Lista os horários de disponibilidade do usuário.    | ✅ |
+| **DELETE** | `/availability/{avail_id}`    | Remove um horário de disponibilidade.               | ✅ |
+| **POST**   | `/appointments/`              | Cria um novo agendamento (manual).                  | ✅ |
+| **GET**    | `/appointments/me/`           | Lista os agendamentos do usuário.                   | ✅ |
+| **DELETE** | `/appointments/{appt_id}`     | Remove um agendamento.                              | ✅ |
 
- Fase 2: Ferramenta Interna
 
- CRUD completo para Services (Update e Delete)
+## 🎯 Roadmap (Próximos Passos)
 
- CRUD para Availability (definição de horários de trabalho)
+- [x] **Fase 1:** Estrutura segura da API (concluída)
+- [x] **Fase 2:** Ferramenta Interna de Gestão (concluída)
+- [ ] **Fase 3:** Abertura para Clientes
+  - [x] Endpoint público para listagem de serviços
+  - [ ] Endpoint público para consulta de horários disponíveis
+  - [ ] Endpoint público para agendamentos por clientes
+- [ ] **Fase 4:** Qualidade e Deploy (do plano original)
+  - [ ] Adicionar testes automatizados (Pytest)
+  - [ ] Implementar filas para notificações (ex: lembretes)
+  - [ ] Deploy na nuvem (AWS Lambda ou similar)
+  - [ ] Pipeline CI/CD
+---
 
- CRUD para Appointments (agendamento manual de clientes)
 
- Fase 3: Abertura para Clientes
-
- Endpoint público para consulta de horários disponíveis
-
- Endpoint público para agendamentos por clientes
-
-👤 Contato
+## 👤 Contato
 
 Jonatas Pereira de Souza
 🔗 LinkedIn: [Jonatas Pereira de Souza](https://www.linkedin.com/in/jon-souza)
