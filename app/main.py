@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app import crud, schemas, models, auth
 from app.database import SessionLocal, engine, get_db
 
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="BarberAPI",
@@ -41,7 +41,7 @@ def create_new_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the BarberAPI!"}
+    return {"status": "ok", "message": "Boas vindas ao BarberAPI!"}
 
 @app.get("/users/me/", response_model=schemas.User)
 def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
@@ -124,7 +124,10 @@ def create_new_appointment(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    return crud.create_appointment(db=db, appointment=appointment, user_id=current_user.id)
+    db_appointment =  crud.create_appointment(db=db, appointment=appointment, user_id=current_user.id)
+    if db_appointment is None:
+        raise HTTPException(status_code=404, detail=f"Serviço com id {appointment.service_id} não encontrado")
+    return db_appointment
 
 @app.get("/appointments/me/", response_model=List[schemas.Appointment])
 def read_my_appointments(
