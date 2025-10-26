@@ -1,83 +1,55 @@
-<div align="center">
+# 💈 BarberAPI
 
-# 💈 **BarberAPI**
-
-API RESTful desenvolvida em **Python + FastAPI** para gerenciamento e agendamento de uma **barbearia**.  
-Projeto criado para **portfólio**, aplicando boas práticas de **arquitetura**, **segurança** e **ambiente de desenvolvimento**.
+Uma **API RESTful robusta** desenvolvida em **Python + FastAPI**, projetada para servir como **backend para um sistema de gerenciamento interno de barbearias**.  
+Este projeto aplica **boas práticas de arquitetura, segurança, testes, migrações e ambiente de desenvolvimento**.
 
 ---
 
-### 🧰 **Tecnologias Principais**
+## 🚀 Status do Projeto
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-High%20Performance-brightgreen?logo=fastapi)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql)
-![Docker](https://img.shields.io/badge/Docker-Containerization-2496ED?logo=docker&logoColor=white)
-![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-ORM-orange?logo=python)
-![Pydantic](https://img.shields.io/badge/Pydantic-Validation-green?logo=pydantic)
-![JWT](https://img.shields.io/badge/JWT-Auth-black?logo=jsonwebtokens)
+✅ **Backend Concluído! (API para gestão interna)**  
 
-</div>
+A API backend principal para **gerenciamento interno da barbearia** está **finalizada, testada e pronta para deploy**.  
+A interface **frontend (Web/Mobile)** será desenvolvida em um projeto separado.
 
 ---
 
-## 🚧 Status do Projeto
+## ✨ Funcionalidades Principais (Backend)
 
-🔄 **Em desenvolvimento ativo**
+A API oferece um conjunto completo de funcionalidades para a gestão interna da barbearia:
 
-| Fase | Descrição |
-|:-----|:-----------|
-| ✅ **Fase 1 (concluída)** | Base segura da API, autenticação, hashing e proteção de endpoints. |
-| ✅ **Fase 2 (concluída)** | Ferramenta interna de gestão para o barbeiro (CRUD completo de Serviços, Disponibilidade e Agendamentos Manuais). |
-| 🚀 **Fase 3 (em andamento)** | Implementação das funcionalidades públicas para clientes (listagem de serviços já concluída). |
-
-
----
-
-## ✨ Funcionalidades Implementadas
-
-A API oferece um conjunto completo de funcionalidades para a gestão interna da barbearia, com foco total em **segurança** e **escalabilidade**:
-
-- 🔐 **Autenticação de Usuários com JWT:**  
-  Sistema completo de cadastro e login com geração de tokens de acesso protegidos.
-
-- 🔒 **Hashing Seguro de Senhas:**  
-  As senhas são criptografadas com **bcrypt**, garantindo sigilo total.
-
-- 🧱 **Endpoints Protegidos:**  
-  Apenas usuários autenticados podem gerenciar os recursos do sistema.
-
-- 🧾 **Validação de Dados com Pydantic:**  
-  Todos os dados são validados antes de entrar na API, evitando inconsistências.
-
-- 💼 **Gestão de Serviços (CRUD Completo):**  
-  O barbeiro pode criar, visualizar, atualizar e remover os serviços oferecidos.
-
-- 📅 **Gestão de Disponibilidade:**  
-  O barbeiro pode definir e remover seus horários de trabalho semanais.
-
-- ✍️ **Gestão de Agendamentos Manuais:**  
-  O barbeiro pode criar, visualizar e remover agendamentos para seus clientes.
-
-- 🌐 **Listagem Pública de Serviços:**  
-  Qualquer pessoa pode visualizar o menu de serviços oferecidos pela barbearia.
----
-
-## 🛠️ **Tecnologias Utilizadas**
-
-| **Ferramenta**              | **Descrição**                                                                                  |
-|-----------------------------|------------------------------------------------------------------------------------------------|
-| **Python 3.11+**            | Linguagem de programação principal.                                                           |
-| **FastAPI**                 | Framework web de alta performance para a construção da API.                                   |
-| **PostgreSQL**              | Banco de dados relacional para armazenamento dos dados.                                       |
-| **Docker & Docker Compose** | Para criar um ambiente de desenvolvimento isolado e reproduzível, gerenciando o serviço do banco de dados. |
-| **SQLAlchemy**              | ORM (Object-Relational Mapper) para interagir com o banco de dados usando código Python.       |
-| **Pydantic**                | Para validação e serialização de dados, garantindo a integridade da API.                      |
-| **Passlib & python-jose**   | Bibliotecas para hashing de senhas e gerenciamento de Tokens JWT.                             |
+- 🔐 **Autenticação Segura:** Sistema completo de cadastro e login de usuários com **Tokens JWT** e **hashing de senhas (bcrypt)**.  
+- 🧱 **Endpoints Protegidos:** Rotas de gestão acessíveis apenas a **usuários autenticados**.  
+- 🧾 **Validação de Dados:** Integridade garantida através do **Pydantic**.  
+- 💼 **Gestão de Serviços (CRUD Completo):** Criação, visualização, atualização e remoção dos serviços oferecidos.  
+- 📅 **Gestão de Disponibilidade:** Definição e remoção dos horários de trabalho do profissional.  
+- ✍️ **Gestão de Agendamentos Manuais:** Criação, visualização e remoção de agendamentos para clientes.  
+- 🌐 **Listagem Pública de Serviços:** Endpoint público para consulta do menu de serviços.  
+- 🔄 **Migrações de Banco de Dados:** Estrutura versionada e gerenciada com **Alembic**.  
+- ✅ **Testes Automatizados:** Cobertura robusta com **Pytest**.  
+- ⚙️ **Pronto para Produção:** Configuração otimizada para **Gunicorn (via WSL/Linux)** e uso de **variáveis de ambiente (.env)**.  
 
 ---
 
-## 🚀 **Como Executar o Projeto Localmente**
+## 🛠️ Tecnologias Utilizadas
+
+| Ferramenta | Descrição |
+|-------------|------------|
+| **Python 3.11+** | Linguagem de programação principal. |
+| **FastAPI** | Framework web de alta performance para a construção da API. |
+| **PostgreSQL** | Banco de dados relacional (gerenciado via Docker). |
+| **Docker & Docker Compose** | Para criar um ambiente de desenvolvimento isolado e reproduzível. |
+| **SQLAlchemy** | ORM para interagir com o banco de dados. |
+| **Alembic** | Ferramenta para gerenciar migrações do schema do banco de dados. |
+| **Pydantic** | Para validação e serialização de dados. |
+| **Passlib & python-jose** | Para hashing de senhas (bcrypt) e gerenciamento de Tokens JWT. |
+| **Pytest & httpx** | Para escrita e execução de testes automatizados da API. |
+| **Gunicorn & Uvicorn** | Servidor ASGI para rodar a aplicação em produção (recomendado via WSL/Linux). |
+| **python-dotenv** | Para carregar variáveis de ambiente de um arquivo `.env` em desenvolvimento. |
+
+---
+
+## 🚀 Como Executar o Projeto Localmente
 
 ### 🔧 Pré-requisitos
 
@@ -86,7 +58,6 @@ A API oferece um conjunto completo de funcionalidades para a gestão interna da 
 - **Git**
 
 ---
-
 ### 🪜 **Passos de Instalação**
 
 1. **Clone o repositório:**
@@ -115,7 +86,7 @@ A API oferece um conjunto completo de funcionalidades para a gestão interna da 
 
 6. **Execute a API:**
     ```bash
-    uvicorn main:app --reload
+    uvicorn app.main:app --reload
 
 📡 Documentação da API
 
@@ -145,30 +116,41 @@ A documentação interativa é gerada automaticamente pelo FastAPI:
 | **DELETE** | `/appointments/{appt_id}`     | Remove um agendamento.                              | ✅ |
 
 
-## 🎯 Roadmap (Próximos Passos)
+## 🎯 Possíveis Features Futuras
 
-- [x] **Fase 1:** Estrutura segura da API (concluída)
-- [x] **Fase 2:** Ferramenta Interna de Gestão (concluída)
-- [ ] **Fase 3:** Abertura para Clientes
-  - [x] Endpoint público para listagem de serviços
-  - [ ] Endpoint público para consulta de horários disponíveis
-  - [ ] Endpoint público para agendamentos por clientes
-- [ ] **Fase 4:** Qualidade e Deploy (do plano original)
-  - [ ] Adicionar testes automatizados (Pytest)
-  - [ ] Implementar filas para notificações (ex: lembretes)
-  - [ ] Deploy na nuvem (AWS Lambda ou similar)
-  - [ ] Pipeline CI/CD
+Embora a funcionalidade principal para gestão interna esteja concluída, o projeto pode ser estendido com novas melhorias e integrações:
+
+### 💼 Gestão de Conta
+- Implementar fluxo de **"Esqueci a Senha"** (geração de token de reset e envio de e-mail).  
+- Implementar **endpoint para alteração de senha** pelo usuário logado.
+
+### 🔔 Notificações
+- Implementar **filas assíncronas** (ex: *Celery + Redis/RabbitMQ*) para envio de notificações, como lembretes de agendamento por **e-mail ou SMS**.
+
+### ☁️ Deploy e Operações
+- **Deploy da API na nuvem** (ex: Heroku, Render, AWS).  
+- Configurar **pipeline CI/CD** (ex: GitHub Actions) para automatizar testes e deploy contínuo.
+
 ---
 
+## 📄 Licença
 
-👤 Contato
+Este projeto é de **código aberto** e está licenciado sob os termos da **Licença MIT**.  
+Sinta-se à vontade para usar, modificar e distribuir o código para qualquer finalidade, **comercial ou não comercial**.
 
-Jonatas Pereira de Souza
-🔗 LinkedIn: [Jonatas Pereira de Souza](https://www.linkedin.com/in/jon-souza)
-💻 GitHub: [JhonUx](https://github.com/jhonux)
+---
 
+## 👤 Contato
 
-<div align="center"> Feito com ❤️ e ☕ por <b>Jonatas Souza</b> <br> <sub>© 2025 BarberAPI. Todos os direitos reservados.</sub> </div> 
+**Jonatas Pereira de Souza**  
+
+🔗 [LinkedIn: Jonatas Pereira de Souza](https://www.linkedin.com/in/jon-souza)  
+💻 [GitHub: JhonUx](https://github.com/jhonux)
+
+---
+
+<p align="center">Feito com ❤️ e ☕ por <b>Jonatas Souza</b></p>  
+<p align="center"><sub>© 2025 BarberAPI. Todos os direitos reservados.</sub></p>
 
 
 
