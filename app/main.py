@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app import crud, schemas, models, auth
 from app.database import SessionLocal, engine, get_db
 
-# models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="BarberAPI",

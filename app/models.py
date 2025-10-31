@@ -40,6 +40,7 @@ class Appointment(Base):
     id = Column(Integer, primary_key=True, index=True)
     client_name = Column(String(100))
     client_email = Column(String(100))
+    client_phone = Column(String(20), nullable=True)
     appointment_date = Column(Date)
     appointment_time = Column(Time)
     service_id = Column(Integer, ForeignKey("services.id"))
