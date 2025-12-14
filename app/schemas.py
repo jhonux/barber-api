@@ -58,6 +58,7 @@ class Availability(AvailabilityBase):
 class AppointmentBase(BaseModel):
     client_name: str
     client_email: EmailStr
+    client_phone: Optional[str] = None
     appointment_date: date
     appointment_time: time
     service_id: int
