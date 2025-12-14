@@ -4,6 +4,7 @@ from typing import Optional
 
 class User(BaseModel):
     id: int
+    name: str
     email: EmailStr
 
     class Config:
@@ -11,6 +12,7 @@ class User(BaseModel):
 
 
 class UserCreate(BaseModel):
+    name: str
     email: EmailStr
     password: str
 
