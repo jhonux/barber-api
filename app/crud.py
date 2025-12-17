@@ -1,6 +1,10 @@
 from sqlalchemy.orm import Session
 from app import models, schemas, auth
 
+from datetime import datetime, date, timedelta
+
+
+
 
 
 def get_user_by_email(db: Session, email: str):
@@ -114,3 +118,42 @@ def delete_appointment(db: Session, appointment_id: int, user_id: int):
         db.delete(db_appointment)
         db.commit()
     return db_appointment
+
+def get_available_times(db: Session, user_id: int, query_date: date):
+    day_of_week = query_date.weekday()
+    
+    availability = db.query(models.Availability).filter(
+        models.Availability.user_id == user_id,
+        models.Availability.day_of_week == day_of_week
+    ).first()
+    
+    if not availability:
+        return []
+    
+    existing_appointments = db.query(models.Appointment).filter(
+        models.Appointment.user_id == user_id,
+        models.Appointment.appointment_date == query_date
+    ).all()
+    
+    busy_times = {appt.appointment_time for appt in existing_appointments}
+    
+    free_slots = []
+    current_time = availability.start_time
+    end_time = availability.end_time
+    
+    dummy_date = date(2000, 1, 1)
+    curr_dt = datetime.combine(dummy_date, current_time)
+    end_dt = datetime.combine(dummy_date, end_time)
+    
+    while curr_dt < end_dt:
+        time_val = curr_dt.time()
+        
+        if time_val not in busy_times:
+            free_slots.append(time_val)
+        
+        curr_dt += timedelta(minutes=30)
+        
+    return free_slots
+    
+    
+    
