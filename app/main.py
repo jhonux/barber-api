@@ -1,3 +1,4 @@
+from datetime import date
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import List
@@ -163,3 +164,11 @@ def delete_my_appointment(
     if db_appointment is None:
         raise HTTPException(status_code=404, detail="Agendamento não encontrado")
     return db_appointment
+
+@app.get("/appointments/available/", response_model=List[time])
+def get_available_appointments(
+    date: date,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    return crud.get_available_times(db=db, user_id=current_user.id, query_date=date)
