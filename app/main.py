@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, time
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import List
