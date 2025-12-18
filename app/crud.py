@@ -4,9 +4,6 @@ from app import models, schemas, auth
 from datetime import datetime, date, timedelta
 
 
-
-
-
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
@@ -88,9 +85,21 @@ def delete_availability(db: Session, availability_id: int, user_id: int):
 # --- CRUD DE AGENDAMENTOS (APPOINTMENTS) ---
 def create_appointment(db: Session, appointment: schemas.AppointmentCreate, user_id: int):
 
-    db_service = get_service_by_id(db, appointment.service_id)
+    db_service = get_service_by_id(db, service_id=appointment.service_id)
     if not db_service:
         return None 
+    
+    clean_time = appointment.appointment_time.replace(microsecond=0)
+    appointment.appointment_time = clean_time
+    
+    existing_appointment = db.query(models.Appointment).filter(
+        models.Appointment.user_id == user_id,
+        models.Appointment.appointment_date == appointment.appointment_date,
+        models.Appointment.appointment_time == appointment.appointment_time
+    ).first()
+    
+    if existing_appointment:
+        raise ValueError("Já existe um agendamento para este horário")
     
     db_appointment = models.Appointment(
         **appointment.dict(),
@@ -135,7 +144,7 @@ def get_available_times(db: Session, user_id: int, query_date: date):
         models.Appointment.appointment_date == query_date
     ).all()
     
-    busy_times = {appt.appointment_time for appt in existing_appointments}
+    busy_times = {appt.appointment_time.replace(microsecond=0) for appt in existing_appointments}
     
     free_slots = []
     current_time = availability.start_time
