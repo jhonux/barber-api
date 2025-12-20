@@ -95,7 +95,7 @@ def create_appointment(db: Session, appointment: schemas.AppointmentCreate, user
     day_appointments = db.query(models.Appointment).filter(
         models.Appointment.user_id == user_id,
         models.Appointment.appointment_date == appointment.appointment_date,
-    ).first()
+    ).all()
     
     for appt in day_appointments:
         db_time = appt.appointment_time.replace(microsecond=0)
