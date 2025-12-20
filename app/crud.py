@@ -92,14 +92,17 @@ def create_appointment(db: Session, appointment: schemas.AppointmentCreate, user
     clean_time = appointment.appointment_time.replace(microsecond=0)
     appointment.appointment_time = clean_time
     
-    existing_appointment = db.query(models.Appointment).filter(
+    day_appointments = db.query(models.Appointment).filter(
         models.Appointment.user_id == user_id,
         models.Appointment.appointment_date == appointment.appointment_date,
-        models.Appointment.appointment_time == appointment.appointment_time
     ).first()
     
-    if existing_appointment:
-        raise ValueError("Já existe um agendamento para este horário")
+    for appt in day_appointments:
+        db_time = appt.appointment_time.replace(microsecond=0)
+        
+        if db_time == clean_time:
+            print("    -> Horário ocupado.")
+            raise ValueError("Horário ocupado.")
     
     db_appointment = models.Appointment(
         **appointment.dict(),
@@ -109,8 +112,6 @@ def create_appointment(db: Session, appointment: schemas.AppointmentCreate, user
     db.commit()
     db.refresh(db_appointment)
     return db_appointment
-
-
 
 def get_appointments_by_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Appointment).filter(
@@ -128,40 +129,46 @@ def delete_appointment(db: Session, appointment_id: int, user_id: int):
         db.commit()
     return db_appointment
 
+# ... imports ...
+
 def get_available_times(db: Session, user_id: int, query_date: date):
     day_of_week = query_date.weekday()
-    
+   
     availability = db.query(models.Availability).filter(
         models.Availability.user_id == user_id,
         models.Availability.day_of_week == day_of_week
     ).first()
-    
+
     if not availability:
-        return []
+        print("-> Sem disponibilidade configurada para este dia.")
+        return [] 
     
+    current_time = availability.start_time.replace(microsecond=0)
+    end_time = availability.end_time.replace(microsecond=0)
+
+    # 3. Buscar agendamentos existentes
     existing_appointments = db.query(models.Appointment).filter(
         models.Appointment.user_id == user_id,
         models.Appointment.appointment_date == query_date
     ).all()
-    
+
     busy_times = {appt.appointment_time.replace(microsecond=0) for appt in existing_appointments}
-    
+  
     free_slots = []
-    current_time = availability.start_time
-    end_time = availability.end_time
-    
+
     dummy_date = date(2000, 1, 1)
     curr_dt = datetime.combine(dummy_date, current_time)
     end_dt = datetime.combine(dummy_date, end_time)
-    
+
     while curr_dt < end_dt:
         time_val = curr_dt.time()
         
         if time_val not in busy_times:
             free_slots.append(time_val)
-        
-        curr_dt += timedelta(minutes=30)
-        
+
+        curr_dt += timedelta(minutes=30) 
+
+    print(f"-> Total de slots livres retornados: {len(free_slots)}")
     return free_slots
     
     
