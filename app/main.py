@@ -139,11 +139,7 @@ def create_new_appointment(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    try:
-        db_appointment = crud.create_appointment(db=db, appointment=appointment, user_id=current_user.id)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
-
+    db_appointment =  crud.create_appointment(db=db, appointment=appointment, user_id=current_user.id)
     if db_appointment is None:
         raise HTTPException(status_code=404, detail=f"Serviço com id {appointment.service_id} não encontrado")
     return db_appointment
