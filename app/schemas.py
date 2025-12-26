@@ -71,6 +71,8 @@ class AppointmentCreate(AppointmentBase):
 class Appointment(AppointmentBase):
     id: int
     user_id: int
+    
+    status: Optional[str] = "pending"
 
     class Config:
         from_attributes = True
