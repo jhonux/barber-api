@@ -45,6 +45,8 @@ class Appointment(Base):
     appointment_date = Column(Date)
     appointment_time = Column(Time)
     service_id = Column(Integer, ForeignKey("services.id"))
+    
+    status = Column(String, default="pending")
 
     user_id = Column(Integer, ForeignKey("users.id"))
     barber = relationship("User", back_populates="appointments")
