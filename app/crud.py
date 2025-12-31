@@ -101,8 +101,12 @@ def create_appointment(db: Session, appointment: schemas.AppointmentCreate, user
         db_time = appt.appointment_time.replace(microsecond=0)
         
         if db_time == clean_time:
-            print("    -> Horário ocupado.")
-            raise ValueError("Horário ocupado.")
+            status_lower = str(appt.status).lower() if appt.status else "pending"
+            
+            if status_lower not in ['cancelled', 'cancelado', 'canceled']:
+                print("    -> Horário ocupado.")
+                return None
+         
     
     db_appointment = models.Appointment(
         **appointment.dict(),
@@ -129,8 +133,6 @@ def delete_appointment(db: Session, appointment_id: int, user_id: int):
         db.commit()
     return db_appointment
 
-# ... imports ...
-
 def get_available_times(db: Session, user_id: int, query_date: date):
     day_of_week = query_date.weekday()
    
@@ -149,7 +151,9 @@ def get_available_times(db: Session, user_id: int, query_date: date):
     # 3. Buscar agendamentos existentes
     existing_appointments = db.query(models.Appointment).filter(
         models.Appointment.user_id == user_id,
-        models.Appointment.appointment_date == query_date
+        models.Appointment.appointment_date == query_date,
+        
+        models.Appointment.status.notin_(['cancelled', 'cancelado', 'canceled'])
     ).all()
 
     busy_times = {appt.appointment_time.replace(microsecond=0) for appt in existing_appointments}
@@ -170,6 +174,3 @@ def get_available_times(db: Session, user_id: int, query_date: date):
 
     print(f"-> Total de slots livres retornados: {len(free_slots)}")
     return free_slots
-    
-    
-    
