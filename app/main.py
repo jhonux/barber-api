@@ -7,6 +7,10 @@ from sqlalchemy.orm import Session
 
 from app import crud, schemas, models, auth
 from app.database import SessionLocal, engine, get_db
+from pydantic import BaseModel
+
+class AppoiontmentStatusUpdate(BaseModel):
+    status: str
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -150,6 +154,23 @@ def read_my_appointments(
     current_user: models.User = Depends(auth.get_current_user)
 ):
     return crud.get_appointments_by_user(db, user_id=current_user.id)
+
+@app.patch("/appointments/{appointment_id}/status", response_model=schemas.Appointment)
+def update_appointment_status(
+    appointment_id: int,
+    status_data: AppoiontmentStatusUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    db_appointment = db.query(models.Appointment).filter(models.Appointment.id == appointment_id).first()
+    
+    if not db_appointment:
+        raise HTTPException(status_code=404, detail="Agendamento não encontrado")
+    
+    db_appointment.status = status_data.status
+    db.commit()
+    db.refresh(db_appointment)
+    return db_appointment
 
 @app.delete("/appointments/{appointment_id}", response_model=schemas.Appointment)
 def delete_my_appointment(
