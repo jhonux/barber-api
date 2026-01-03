@@ -64,7 +64,6 @@ def delete_service(db: Session,
         db.refresh(db_service)
     return db_service
 
-
 # --- CRUD DE DISPONIBILIDADES ---
 
 def create_availability(db: Session, availability: schemas.AvailabilityCreate, user_id: int):
