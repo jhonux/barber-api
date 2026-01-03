@@ -22,22 +22,27 @@ def create_user(db: Session, user: schemas.UserCreate):
 def get_services(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Service).offset(skip).limit(limit).all()
 
-def create_service(db: Session, service: schemas.ServiceCreate):
+def create_service(db: Session, service: schemas.ServiceCreate, user_id: int):
     db_service = models.Service(
         name=service.name,
         duration_minutes=service.duration_minutes,
-        price=service.price
+        price=service.price,
+        user_id=user_id
     )
     db.add(db_service)
     db.commit()
     db.refresh(db_service)
     return db_service
 
-def get_service_by_id(db: Session, service_id: int):
-    return db.query(models.Service).filter(models.Service.id == service_id).first()
+def get_services(db: Session, user_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Service)\
+             .filter(models.Service.user_id == user_id)\
+             .offset(skip)\
+             .limit(limit)\
+             .all()
 
-def update_service(db: Session, service_id: int, service: schemas.ServiceUpdate):
-    db_service = get_service_by_id(db, service_id)
+def update_service(db: Session, service_id: int, service: schemas.ServiceUpdate, user_id: int):
+    db_service = get_service_by_id(db, service_id, user_id)
     if db_service:
         update_data = service.dict(exclude_unset=True)
         for key, value in update_data.items():
@@ -46,11 +51,17 @@ def update_service(db: Session, service_id: int, service: schemas.ServiceUpdate)
         db.refresh(db_service)
     return db_service
 
-def delete_service(db: Session, service_id: int):
-    db_service = get_service_by_id(db, service_id)
+def delete_service(db: Session,
+                   service_id: int,
+                   service: schemas.ServiceUpdate,
+                   user_id: int):
+    db_service = get_service_by_id(db, service_id, user_id)
     if db_service:
-        db.delete(db_service)
+        update_data = service.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_service, key, value)
         db.commit()
+        db.refresh(db_service)
     return db_service
 
 

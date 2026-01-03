@@ -83,7 +83,9 @@ def read_all_services(
     db: Session = Depends(get_db), 
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    services = crud.get_services(db, skip=skip, limit=limit)
+    services = crud.get_services(db, 
+                                 user_id=current_user.id,
+                                 skip=skip, limit=limit)
     return services
 
 @app.put("/services/{service_id}", response_model=schemas.Service)
@@ -93,7 +95,9 @@ def update_existing_service(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    db_service = crud.update_service(db, service_id=service_id, service=service)
+    db_service = crud.update_service(db, service_id=service_id,
+                                     service=service,
+                                     user_id=current_user.id)
     if db_service is None:
         raise HTTPException(status_code=404, detail="Serviço não encontrado")
     return db_service
@@ -104,7 +108,9 @@ def delete_existing_service(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    db_service = crud.delete_service(db, service_id=service_id)
+    db_service = crud.delete_service(db, 
+                                     user_id=current_user.id,
+                                     service_id=service_id)
     if db_service is None:
         raise HTTPException(status_code=404, detail="Serviço não encontrado")
     return db_service
