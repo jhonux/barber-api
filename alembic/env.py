@@ -16,6 +16,9 @@ db_url = os.getenv("DATABASE_URL")
 
 if not db_url:
     db_url = "postgresql+psycopg2://barber:supersecret@localhost:5432/barberapi"
+    
+if db_url:
+    db_url = db_url.replace("%", "%%")
 
 config.set_main_option("sqlalchemy.url", db_url)
 
