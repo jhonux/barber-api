@@ -73,7 +73,7 @@ def create_new_service(
     current_user: models.User = Depends(auth.get_current_user)
 ):
     
-    return crud.create_service(db=db, service=service)
+    return crud.create_service(db=db, service=service, user_id=current_user.id)
 
 
 @app.get("/services/", response_model=List[schemas.Service])
