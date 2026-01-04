@@ -30,6 +30,13 @@ class ServiceBase(BaseModel):
 class ServiceCreate(ServiceBase):
     pass
 
+class ServiceResponse(ServiceBase):
+    id: int
+    user_id: int
+
+    class Config:
+        from_attributes = True
+
 class ServiceUpdate(BaseModel):
     name: Optional[str] = None
     duration_minutes: Optional[int] = None
