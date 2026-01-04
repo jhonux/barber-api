@@ -83,7 +83,7 @@ def read_all_services(
     db: Session = Depends(get_db), 
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    services = crud.get_services(db, 
+    services = crud.get_services_by_user(db, 
                                  user_id=current_user.id,
                                  skip=skip, limit=limit)
     return services
