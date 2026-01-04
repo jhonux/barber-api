@@ -34,12 +34,17 @@ def create_service(db: Session, service: schemas.ServiceCreate, user_id: int):
     db.refresh(db_service)
     return db_service
 
-def get_services(db: Session, user_id: int, skip: int = 0, limit: int = 100):
+def get_services_by_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Service)\
              .filter(models.Service.user_id == user_id)\
              .offset(skip)\
              .limit(limit)\
              .all()
+             
+def get_service_by_id(db: Session, service_id: int, user_id: int= None):
+    if user_id:
+        return db.query(models.Service).filter(models.Service.id == service_id, models.Service.user_id == user_id).first()
+    return db.query(models.Service).filter(models.Service.id == service_id).first()
 
 def update_service(db: Session, service_id: int, service: schemas.ServiceUpdate, user_id: int):
     db_service = get_service_by_id(db, service_id, user_id)
@@ -53,16 +58,13 @@ def update_service(db: Session, service_id: int, service: schemas.ServiceUpdate,
 
 def delete_service(db: Session,
                    service_id: int,
-                   service: schemas.ServiceUpdate,
                    user_id: int):
     db_service = get_service_by_id(db, service_id, user_id)
     if db_service:
-        update_data = service.dict(exclude_unset=True)
-        for key, value in update_data.items():
-            setattr(db_service, key, value)
+        db.delete(db_service)
         db.commit()
-        db.refresh(db_service)
     return db_service
+          
 
 # --- CRUD DE DISPONIBILIDADES ---
 
