@@ -1,5 +1,5 @@
 from datetime import time, date
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 
 class User(BaseModel):
@@ -54,11 +54,21 @@ class AvailabilityBase(BaseModel):
     end_time: time
 
 class AvailabilityCreate(AvailabilityBase):
-    pass
+    
+    @field_validator('day_of_week')
+    @classmethod
+    def validate_day_of_week(cls, v: int) -> int:
+        return (v + 6) % 7
+
 
 class Availability(AvailabilityBase):
     id: int
     user_id: int
+    
+    @field_validator('day_of_week', mode='before')
+    @classmethod
+    def validate_day_of_week(cls, v: int) -> int:
+        return (v + 1) % 7
 
     class Config:
         from_attributes = True
