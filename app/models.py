@@ -1,16 +1,43 @@
-from sqlalchemy import Column, Integer, String, Float, Time, ForeignKey, Date
+import enum
+from sqlalchemy import Column, Integer, String, Float, Time, ForeignKey, Date, DateTime, Boolean, Enum as PgEnum
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
+class UserRole(str, enum.Enum):
+    OWNER = "owner"
+    BARBER = "barber"
+    ADMIN = "admin"
+    
+
 from app.database import Base
+
+class Organization(Base):
+    __tablename__ = "organizations"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    slug = Column(String, unique=True, index=True)
+    segment = Column(String, default="barbershop")
+    plan_type = Column(String, default="beta")
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    users = relationship("User", back_populates="organization")
 
 
 class User(Base):
     __tablename__ = "users"
+    
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100))
     email = Column(String(100), unique=True, index=True)
+    is_active = Column(Boolean, default=True)
     hashed_password = Column(String(255))
 
+    organization_id = Column(Integer, ForeignKey("organizations.id"), nullable=True)
+    organization = relationship("Organization", back_populates="users")
+    role = Column(PgEnum(UserRole), default=UserRole.OWNER, nullable=False, server_default='OWNER')
+    
     availabilities = relationship("Availability", back_populates="owner")
     appointments = relationship("Appointment", back_populates="barber")
     services = relationship("Service", back_populates="owner")
