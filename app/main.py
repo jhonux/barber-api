@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, time, timedelta
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import List
@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app import crud, schemas, models, auth
+from app.models import UserRole
 from app.database import SessionLocal, engine, get_db
 from pydantic import BaseModel
 
@@ -38,17 +39,27 @@ app.add_middleware(
 
 
 @app.post("/token", response_model=schemas.Token)
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+    ):
+    
     user = crud.get_user_by_email(db, email=form_data.username)
-
     if not user or not auth.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=401,
             detail="E-mail ou senha incorretos",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
     
-    access_token = auth.create_access_token(data={"sub": user.email})
+    access_token = auth.create_access_token(
+        data={"sub": user.email,
+              "role": user.role.value if user.role else "owner",
+              "org_id": user.organization_id,
+              "org_slug": user.organization.slug if user.organization else None
+              },
+        )
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -60,6 +71,7 @@ def create_new_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="E-mail já cadastrado")
     
     return crud.create_user(db=db, user=user)
+
 
 @app.get("/")
 def read_root():
@@ -117,6 +129,51 @@ def delete_existing_service(
     if db_service is None:
         raise HTTPException(status_code=404, detail="Serviço não encontrado")
     return db_service
+
+
+# --- ENDPOINT DE CRIAÇÃO DE BARBEIROS (USUÁRIOS) ---
+@app.post("/barbers/", response_model=schemas.UserResponse) 
+def create_barber(
+    user: schemas.UserCreateBarber, 
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    if current_user.role != UserRole.OWNER and current_user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Apenas donos podem adicionar membros à equipe."
+        )
+
+    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email já cadastrado.")
+
+    hashed_password = auth.get_password_hash(user.password)
+    
+    new_barber = models.User(
+        email=user.email,
+        hashed_password=hashed_password,
+        name=user.name,
+        
+        organization_id=current_user.organization_id, 
+        role=UserRole.BARBER, 
+        is_active=True
+    )
+    
+    db.add(new_barber)
+    db.commit()
+    db.refresh(new_barber)
+    
+    return new_barber
+
+@app.get("/barbers/", response_model=list[schemas.UserResponse])
+def read_my_team(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    return db.query(models.User)\
+             .filter(models.User.organization_id == current_user.organization_id)\
+             .all()
 
 # --- ENDPOINT DE CRIAÇÃO DE DISPONIBILIDADES ---
 @app.post("/availability/", response_model=schemas.Availability, status_code=status.HTTP_201_CREATED)

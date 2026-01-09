@@ -53,4 +53,12 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     user = crud.get_user_by_email(db, email=email)
     if user is None:
         raise credentials_exception
+    
+    if user.organization_id and user.organization:
+        if not user.organization.is_active:
+            raise HTTPException(
+                 status_code=403, 
+                 detail="Sua barbearia está suspensa. Entre em contato com o suporte."
+             )
+            
     return user
