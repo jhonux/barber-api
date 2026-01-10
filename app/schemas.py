@@ -2,6 +2,10 @@ from datetime import time, date
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 
+class UserBase(BaseModel):
+    email: EmailStr
+
+
 class User(BaseModel):
     id: int
     name: str
@@ -13,13 +17,11 @@ class User(BaseModel):
 
 class UserCreate(BaseModel):
     name: str
-    email: EmailStr
     password: str
     organization_name: str    
 
-class UserCreateTeam(UserCreate):
+class UserCreateTeam(UserBase):
     name: str
-    email: EmailStr
     password: str
     
 class UserResponse(BaseModel):
@@ -36,6 +38,8 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    role: str
+    user_name: str
 
 
 class ServiceBase(BaseModel):
