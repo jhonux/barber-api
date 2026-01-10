@@ -61,7 +61,12 @@ def login_for_access_token(
               "org_slug": user.organization.slug if user.organization else None
               },
         )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer",
+        "role": user.role.value if user.role else "owner",
+        "user_name": user.name
+    }
 
 
 # --- ENDPOINT DE CADASTRO DE USUÁRIO ---
