@@ -132,9 +132,9 @@ def delete_existing_service(
 
 
 # --- ENDPOINT DE CRIAÇÃO DE BARBEIROS (USUÁRIOS) ---
-@app.post("/barbers/", response_model=schemas.UserResponse) 
-def create_barber(
-    user: schemas.UserCreateBarber, 
+@app.post("/team/", response_model=schemas.UserResponse) 
+def create_team_member(
+    user: schemas.UserCreateTeam, 
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
@@ -150,7 +150,7 @@ def create_barber(
 
     hashed_password = auth.get_password_hash(user.password)
     
-    new_barber = models.User(
+    new_team_member = models.User(
         email=user.email,
         hashed_password=hashed_password,
         name=user.name,
@@ -160,13 +160,13 @@ def create_barber(
         is_active=True
     )
     
-    db.add(new_barber)
+    db.add(new_team_member)
     db.commit()
-    db.refresh(new_barber)
-    
-    return new_barber
+    db.refresh(new_team_member)
 
-@app.get("/barbers/", response_model=list[schemas.UserResponse])
+    return new_team_member
+
+@app.get("/team/", response_model=list[schemas.UserResponse])
 def read_my_team(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user)
@@ -174,6 +174,34 @@ def read_my_team(
     return db.query(models.User)\
              .filter(models.User.organization_id == current_user.organization_id)\
              .all()
+
+@app.delete("/team/{member_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_member(
+    member_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    if current_user.role != "owner" and current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Apenas donos podem remover membros da equipe."
+        )
+
+    db_member = db.query(models.User).filter(
+        models.User.id == member_id,
+        models.User.organization_id == current_user.organization_id
+    ).first()
+
+    if not db_member:
+        raise HTTPException(status_code=404, detail="Profissional não encontrado")
+
+    if db_member.role == "owner":
+        raise HTTPException(status_code=400, detail="Não é possível remover o dono da equipe.")
+
+    db.delete(db_member)
+    db.commit()
+    return None
+
 
 # --- ENDPOINT DE CRIAÇÃO DE DISPONIBILIDADES ---
 @app.post("/availability/", response_model=schemas.Availability, status_code=status.HTTP_201_CREATED)
