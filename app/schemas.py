@@ -17,7 +17,7 @@ class UserCreate(BaseModel):
     password: str
     
 
-class UserCreateBarber(UserCreate):
+class UserCreateTeam(UserCreate):
     name: str
     email: EmailStr
     password: str
