@@ -14,8 +14,7 @@ class User(BaseModel):
     class Config:
         from_attributes = True
 
-
-class UserCreate(BaseModel):
+class UserCreate(UserBase):
     name: str
     password: str
     organization_name: str    
