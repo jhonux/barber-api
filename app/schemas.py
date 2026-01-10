@@ -15,7 +15,7 @@ class UserCreate(BaseModel):
     name: str
     email: EmailStr
     password: str
-    
+    organization_name: str    
 
 class UserCreateTeam(UserCreate):
     name: str

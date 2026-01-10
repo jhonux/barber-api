@@ -9,6 +9,7 @@ from app import crud, schemas, models, auth
 from app.models import UserRole
 from app.database import SessionLocal, engine, get_db
 from pydantic import BaseModel
+from slugify import slugify
 
 class AppoiontmentStatusUpdate(BaseModel):
     status: str
@@ -70,7 +71,41 @@ def create_new_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="E-mail já cadastrado")
     
-    return crud.create_user(db=db, user=user)
+    base_slug = slugify(user.organization_name)
+    slug = base_slug
+    counter = 1
+    
+    while db.query(models.Organization).filter(models.Organization.slug == slug).first():
+        slug = f"{base_slug}-{counter}"
+        counter += 1
+    new_org = models.Organization(
+        name=user.organization_name,
+        slug=slug,
+        plan_type="free",
+        is_active=True
+    
+    )
+    db.add(new_org)
+    db.flush()
+    db.refresh(new_org)
+    
+    hashed_password = auth.get_password_hash(user.password)
+    
+    new_user = models.User(
+        email=user.email,
+        name=user.name,
+        hashed_password=hashed_password,
+        organization_id=new_org.id,
+
+        role=UserRole.OWNER,
+        is_active=True
+    )
+    
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    return new_user
 
 
 @app.get("/")
