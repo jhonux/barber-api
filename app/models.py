@@ -40,7 +40,6 @@ class User(Base):
     
     availabilities = relationship("Availability", back_populates="owner")
     appointments = relationship("Appointment", back_populates="barber")
-    services = relationship("Service", back_populates="owner")
 
 
 class Service(Base):
@@ -49,10 +48,9 @@ class Service(Base):
     name = Column(String(100), index=True)
     duration_minutes = Column(Integer)
     price = Column(Float)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    organization_id = Column(Integer, ForeignKey("organizations.id"))
 
     appointments = relationship("Appointment", back_populates="service")
-    owner = relationship("User", back_populates="services")
 
 
 class Availability(Base):

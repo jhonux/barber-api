@@ -22,32 +22,33 @@ def create_user(db: Session, user: schemas.UserCreate):
 def get_services(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Service).offset(skip).limit(limit).all()
 
-def create_service(db: Session, service: schemas.ServiceCreate, user_id: int):
+def create_service(db: Session, service: schemas.ServiceCreate, organization_id: int):
     db_service = models.Service(
         name=service.name,
         duration_minutes=service.duration_minutes,
         price=service.price,
-        user_id=user_id
+        organization_id=organization_id,
     )
     db.add(db_service)
     db.commit()
     db.refresh(db_service)
     return db_service
 
-def get_services_by_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
+def get_services_by_organization(db: Session, organization_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Service)\
-             .filter(models.Service.user_id == user_id)\
+             .filter(models.Service.organization_id == organization_id)\
              .offset(skip)\
              .limit(limit)\
              .all()
              
-def get_service_by_id(db: Session, service_id: int, user_id: int= None):
-    if user_id:
-        return db.query(models.Service).filter(models.Service.id == service_id, models.Service.user_id == user_id).first()
-    return db.query(models.Service).filter(models.Service.id == service_id).first()
+def get_service_by_id(db: Session, service_id: int, organization_id: int= None):
+    return db.query(models.Service).filter(
+        models.Service.id == service_id,
+        models.Service.organization_id == organization_id
+    ).first()
 
-def update_service(db: Session, service_id: int, service: schemas.ServiceUpdate, user_id: int):
-    db_service = get_service_by_id(db, service_id, user_id)
+def update_service(db: Session, service_id: int, service: schemas.ServiceUpdate, organization_id: int):
+    db_service = get_service_by_id(db, service_id, organization_id)
     if db_service:
         update_data = service.dict(exclude_unset=True)
         for key, value in update_data.items():
@@ -58,8 +59,8 @@ def update_service(db: Session, service_id: int, service: schemas.ServiceUpdate,
 
 def delete_service(db: Session,
                    service_id: int,
-                   user_id: int):
-    db_service = get_service_by_id(db, service_id, user_id)
+                   organization_id: int):
+    db_service = get_service_by_id(db, service_id, organization_id)
     if db_service:
         db.delete(db_service)
         db.commit()
