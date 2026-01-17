@@ -97,8 +97,12 @@ def delete_availability(db: Session, availability_id: int, user_id: int):
 
 # --- CRUD DE AGENDAMENTOS (APPOINTMENTS) ---
 def create_appointment(db: Session, appointment: schemas.AppointmentCreate, user_id: int):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        return None
+    
 
-    db_service = get_service_by_id(db, service_id=appointment.service_id)
+    db_service = get_service_by_id(db, service_id=appointment.service_id, organization_id=user.organization_id)
     if not db_service:
         return None 
     
