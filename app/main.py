@@ -25,8 +25,8 @@ app = FastAPI(
 origins = [
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://trimmaapp.com.br",
-    "https://www.trimmaapp.com.br",
+    "https://app.trimmaapp.com.br",
+    "https://www.app.trimmaapp.com.br",
     "https://polite-rock-0e87ed80f.1.azurestaticapps.net"
 ]
 
